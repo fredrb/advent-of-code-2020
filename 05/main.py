@@ -14,8 +14,6 @@ for t in [t.strip() for t in open('input.txt').readlines()]:
   seat_id = int(r,base=2) * 8 + int(c,base=2)
   seats[seat_id] = True
 
-for r in range(1, 127):
-  for c in range(0, 8):
-    s_id = r*8+c
-    if seats[s_id] == False and seats[s_id+1] and seats[s_id-1]:
-      print(s_id)
+for s_id in range(1, 1023):
+  if not seats[s_id] and seats[s_id+1] and seats[s_id-1]:
+    print(s_id)
