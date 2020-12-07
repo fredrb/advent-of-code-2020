@@ -17,3 +17,5 @@ for t in [t.strip() for t in open('input.txt').readlines()]:
 for s_id in range(1, 1023):
   if not seats[s_id] and seats[s_id+1] and seats[s_id-1]:
     print(s_id)
+
+
