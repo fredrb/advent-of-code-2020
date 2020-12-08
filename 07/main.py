@@ -32,4 +32,3 @@ def calc(color: str):
     return 0 if len(rule) == 0 else functools.reduce(lambda acc,x: acc + (x[0]) + (x[0]) * calc(x[1]), rule, 0)
 
 print(calc('shiny gold'))
-
