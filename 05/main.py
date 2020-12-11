@@ -6,8 +6,6 @@
 #   high = seat_id if seat_id > high else high
 # print(high)
 
-# T: 9m
-
 seats = [False for i in range(0,1024)]
 for t in [t.strip() for t in open('input.txt').readlines()]:
   (r,c) = t[:7].replace('F','0').replace('B','1'), t[7:].replace('L','0').replace('R','1')
