@@ -34,24 +34,24 @@ class CircularLinkedList():
     c = self.find_back_from(anchor, after)
     if not c:
       return None
-    cn = c.next
-    for v in reversed(triplet):
-      cn = Node(v, cn)
-      cn.next.prev = cn
-    c.next = cn
+    last = c.next
+    c.next = triplet[0]
+    triplet[0].prev = c
+    triplet[2].next = last
+    last.prev = triplet[2]
     return True
 
   def remove_after(self, node):
     removed = []
-    root = node
-    node = node.next
+    # root = node
+    cn = node.next
     for _ in range(0, 3):
-      if node == self.head:
-        self.head = root
-      removed.append(node.value)
-      node = node.next
-    root.next = node
-    node.prev = root
+      if cn == self.head:
+        self.head = node
+      removed.append(cn)
+      cn = cn.next
+    node.next = cn
+    cn.prev = node
     return removed
 
   def get_index(self, i):
@@ -90,7 +90,7 @@ class CircularLinkedList():
       n = n.next
     return v
 
-cl = CircularLinkedList(example)
+# cl = CircularLinkedList(example)
 
 def play(cl, rounds, log=False):
   n = None
@@ -103,13 +103,14 @@ def play(cl, rounds, log=False):
     else:
       n = n.next
     pick = cl.remove_after(n)
+    picked_value = [p.value for p in pick]
     if log:
       print("   %s" % n.value)
-      print("pick up: %s" % pick)
+      print("pick up: %s" % picked_value)
     destination = n.value - 1
     if destination == 0:
         destination = 9
-    while destination in pick:
+    while destination in picked_value:
       destination -= 1
       if destination == 0:
         destination = 9
@@ -136,4 +137,4 @@ def part2(log, s):
 example = [3, 8, 9, 1, 2, 5, 4, 6, 7]
 puzzle = [9, 2, 5, 1, 7, 6, 8, 3, 4]
 
-part_1(True, puzzle)
+part_1(True, example)
