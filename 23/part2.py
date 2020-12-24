@@ -7,20 +7,20 @@ class Node():
 class CircularLinkedList():
   def __init__(self, initializer, part2=False):
     if part2:
-      print("initializing circular list with 1M position")
-      self.head = Node(0)
+      bootstrap = [i for i in range(1, 1000001)]
+      for i in range(0, len(initializer)):
+        bootstrap[i] = initializer[i]
+      print(len(bootstrap))
+      print(bootstrap[:20])
+      print(bootstrap[-20:])
+
+      self.head = Node(bootstrap[0])
       cn = self.head
-      for i in range(1, 1000001):
-        cn.next = Node(i, None, cn)
+      for l in bootstrap[1:]:
+        cn.next = Node(l, None, cn)
         cn = cn.next
       cn.next = self.head
       self.head.prev = cn
-
-      cn = self.head
-      for v in initializer:
-        cn.value = v
-        cn = cn.next
-      print("done")
     else:
       self.head = Node(initializer[0], None)
       cn = self.head
@@ -29,9 +29,19 @@ class CircularLinkedList():
         cn.next.prev = cn
       self.head.next = cn
       cn.prev = self.head
+    self.node_map = {}
+    test_list = []
+    cn = self.head
+    while True:
+      test_list.append(cn.value)
+      self.node_map[cn.value] = cn
+      cn = cn.next
+      if cn == self.head:
+        break
 
   def append(self, triplet, anchor, after=0):
-    c = self.find_back_from(anchor, after)
+    # c = self.find_back_from(anchor, after)
+    c = self.find_in_map(after)
     if not c:
       return None
     last = c.next
@@ -79,6 +89,9 @@ class CircularLinkedList():
       if n == start:
         return None
 
+  def find_in_map(self, value):
+    return self.node_map[value]
+
   def get_array_from(self, v, until):
     n = self.find(v)
     if n is None:
@@ -94,14 +107,18 @@ class CircularLinkedList():
 
 def play(cl, rounds, log=False):
   n = None
+  last_i = 0
   for i in range(1, rounds+1):
+    last_i = i
+    if i % 1000000 == 0:
+      print("-- move %s --" % i)
     if log:
       print("-- move %s --" % i)
       print("cups: %s" % cl.get_array_from(cl.head.value, 10))
     if not n:
       n = cl.head
     else:
-      n = n.next
+      n = cl.find_in_map(n.value).next
     pick = cl.remove_after(n)
     picked_value = [p.value for p in pick]
     if log:
@@ -109,11 +126,11 @@ def play(cl, rounds, log=False):
       print("pick up: %s" % picked_value)
     destination = n.value - 1
     if destination == 0:
-        destination = 9
+        destination = max(cl.node_map.keys())
     while destination in picked_value:
       destination -= 1
       if destination == 0:
-        destination = 9
+        destination = max(cl.node_map.keys())
     if log:
       print("destination: %s" % destination)
     r = cl.append(pick, n, destination)
@@ -121,6 +138,7 @@ def play(cl, rounds, log=False):
       print("Failed to append")
     if log:
       print("")
+  print("Last round played: %s" % last_i)
   return cl
 
 def part_1(log, s):
@@ -128,13 +146,17 @@ def part_1(log, s):
   cl = play(cl, 100, log)
   print(''.join([str(i) for i in cl.get_array_from(1, 9)[1:]]))
 
-def part2(log, s):
+def part_2(log, s):
   cl = CircularLinkedList(s, True)
   cl = play(cl, 10000000, log)
-  (l, r) = cl.get_array_from(1, 3)[1:]
-  print("%s * %s = %s" % (l, r, int(l)*int(r)))
+  n = cl.find_in_map(1)
+  print(n.value)
+  l = n.next.value
+  r = n.next.next.value
+  print("%s * %s = %s" % (l, r, l*r))
 
 example = [3, 8, 9, 1, 2, 5, 4, 6, 7]
 puzzle = [9, 2, 5, 1, 7, 6, 8, 3, 4]
 
-part_1(True, example)
+# part_1(False, example)
+part_2(False, puzzle)
